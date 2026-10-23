@@ -378,10 +378,10 @@ const VIEWS = {
     <p class="lead">Gemini is the AI brain of your chat. The key is free and is saved inside your own project, hidden from visitors.</p>
     <ol class="steps">
       <li>Click <b>Get a free key</b>. Sign in with Google, then click <kbd>Create API key</kbd>.</li>
-      <li>Copy the key (it starts with <b>AIza</b>) and paste it below.</li>
+      <li>Click <kbd>Copy key</kbd> (new keys start with <b>AQ.</b>, older ones with <b>AIza</b>) and paste it below.</li>
     </ol>
     <div class="row" style="margin-bottom:18px"><a class="btn sec" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Get a free key ${I.ext}</a></div>
-    <div class="field"><label for="fGem">Gemini key</label><input type="password" id="fGem" placeholder="AIza..." autocomplete="off"></div>
+    <div class="field"><label for="fGem">Gemini key</label><input type="password" id="fGem" placeholder="AQ... or AIza..." autocomplete="off"></div>
     <button class="btn pri" id="bGem" type="button">Save and test my AI</button>
     <div class="status" id="st7"></div>
     ${nav(7, { locked: !S.done[7], label: 'Finish' })}`,
@@ -503,7 +503,7 @@ const ACTIONS = {
   7() {
     $('bGem').onclick = async () => {
       const k = $('fGem').value.trim();
-      if (!/^AIza[\w-]{20,}$/.test(k)) return status('st7', 'bad', 'That does not look like a Gemini key. It starts with "AIza".');
+      if (!/^(AIza[\w-]{20,}|AQ\.[\w.-]{20,})$/.test(k)) return status('st7', 'bad', 'That does not look like a Gemini key. It starts with "AQ." (or "AIza" for older keys), with no spaces.');
       status('st7', 'wait', 'Saving your key...');
       try {
         const c = await client();
