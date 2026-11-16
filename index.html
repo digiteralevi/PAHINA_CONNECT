@@ -232,8 +232,8 @@ const I = {
 };
 
 /* ---------------- state ---------------- */
-let S = Object.assign({ step: 0, done: {}, url: '', key: '', email: '' }, store.get());
-function save() { store.set({ step: S.step, done: S.done, url: S.url, key: S.key, email: S.email }); }
+let S = Object.assign({ step: 0, done: {}, url: '', key: '', email: '', shop: '', shopChk: {} }, store.get());
+function save() { store.set({ step: S.step, done: S.done, url: S.url, key: S.key, email: S.email, shop: S.shop, shopChk: S.shopChk }); }
 const projectRef = () => { const m = String(S.url).match(/^https:\/\/([a-z0-9]+)\.supabase\.(co|in)/i); return m ? m[1] : '_'; };
 const dash = (path) => 'https://supabase.com/dashboard/project/' + projectRef() + path;
 const cfgJson = () => JSON.stringify({ mode: 'supabase', supabase: { url: S.url, anonKey: S.key } });
@@ -558,12 +558,28 @@ const VIEWS = {
         <li>Open your store and click <b>Ask us</b>. Your Pahina AI now answers there, so you only keep one AI up to date.</li>
       </ol>
     </div>
+    <div class="note" style="margin-top:18px"><b>Your Pahina Store</b>
+      <p class="help" style="margin:6px 0 10px">Pahina Store runs on its own free Firebase setup (it does not need this Supabase project). Save your store link here so all your tools are in one place.</p>
+      <div class="field" style="margin:0"><label for="fShop">Your store link</label><input type="url" id="fShop" placeholder="https://yourshop.vercel.app" value="${esc(S.shop || '')}" autocomplete="off"></div>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap;gap:8px"><button class="btn sec" id="bShopSave" type="button">Save store link</button>${S.shop ? `<a class="btn sec" href="${esc(S.shop)}" target="_blank" rel="noopener">Open my store ${I.ext}</a><a class="btn sec" href="${esc(S.shop.replace(/\/+$/, '') + '/?mode=admin')}" target="_blank" rel="noopener">Store admin ${I.ext}</a>` : ''}</div>
+      <div id="stShop" class="help" style="margin-top:6px"></div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">${[['guide', 'Finished the Store guide (Firebase, Cloudinary, PayMongo, email, Vercel)'], ['test', 'Did a \u20b11 test purchase and got the email'], ['builder', 'Copied the product link into Pahina Builder (Payment tab)'], ['after', 'Pasted the Thank You link in the product\u2019s After-payment page'], ['ai', 'Added my Pahina AI chat link to the store (optional)']].map(([k, n]) => `<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:13.5px;line-height:1.5"><input type="checkbox" data-shopchk="${k}" ${S.shopChk && S.shopChk[k] ? 'checked' : ''} style="margin-top:3px;width:16px;height:16px;flex:none">${n}</label>`).join('')}</div>
+      <a class="btn sec" style="margin-top:12px" href="${esc(APPS.store)}" target="_blank" rel="noopener">Open the Store guide ${I.ext}</a>
+    </div>
     <h3>Your private Connect link</h3>
     <p class="help" style="margin:0 0 10px">Bookmark this. It opens this page with all your tools connected, on any phone or laptop.</p>
     <div class="code" id="cLink">${esc(L.connect)}</div>
     <div class="row" style="margin-top:10px"><button class="btn sec" id="bCopyLink" type="button">${I.copy}Copy my Connect link</button></div>
     ${stuck()}
-    <div class="note" style="margin-top:22px"><b>Keep your project awake.</b> Free Supabase projects pause after a week with almost no activity. Visitors on your website keep it awake. If Supabase ever emails you about a pause, open your project once and click <kbd>Resume project</kbd>; your data stays safe.</div>
+    <div class="note" style="margin-top:22px"><b>Keep your project awake.</b> Free Supabase projects pause after about a week with almost no activity. Visitors on your website keep it awake. For slow weeks, set a free weekly wake-up once (3 minutes):
+      <ol class="storesteps">
+        <li>Click <b>Copy my wake-up link</b>.</li>
+        <li>Open <a href="https://cron-job.org" target="_blank" rel="noopener">cron-job.org</a>, make a free account, then click <b>Create cronjob</b>.</li>
+        <li>Paste the link in <b>URL</b>, choose <b>Every day</b> (or every 3 days), then click <b>Create</b>.</li>
+      </ol>
+      <div class="row" style="margin-top:10px;flex-wrap:wrap;gap:8px"><button class="btn sec" id="bWakeCopy" type="button">${I.copy}Copy my wake-up link</button><button class="btn sec" id="bWakeCheck" type="button">Check my project now</button></div>
+      <div id="stWake" class="help" style="margin-top:6px"></div>
+      <p class="help" style="margin:10px 0 0">If Supabase ever emails you about a pause, open your project and click <kbd>Resume project</kbd>. Your data stays safe.</p></div>
     <div class="nav"><button class="btn ghost" data-act="restart" type="button">Run setup again</button><a class="btn ghost" href="https://supabase.com/dashboard/project/${esc(projectRef())}" target="_blank" rel="noopener">Open my Supabase project ${I.ext}</a></div>`;
   }
 };
@@ -725,6 +741,19 @@ const ACTIONS = {
   },
   8() {
     $('bCopyLink').onclick = () => copy(links().connect, 'Connect link');
+    const wake = () => S.url.replace(/\/+$/, '') + '/rest/v1/?apikey=' + encodeURIComponent(S.key);
+    $('bWakeCopy').onclick = () => copy(wake(), 'Wake-up link');
+    $('bWakeCheck').onclick = async () => {
+      status('stWake', 'wait', 'Checking your project...');
+      try { const r = await fetch(wake()); status('stWake', r.ok ? 'ok' : 'bad', r.ok ? 'Your project is awake and working.' : 'Your project did not answer (' + r.status + '). Open your Supabase project and click Resume project if it is paused.'); }
+      catch (e) { status('stWake', 'bad', 'Your project did not answer. Open your Supabase project and click Resume project if it is paused.'); }
+    };
+    $('bShopSave').onclick = () => {
+      const v = ($('fShop').value || '').trim().replace(/[?#].*$/, '').replace(/\/+$/, '');
+      if (v && !/^https:\/\/[^\s/]+\.[^\s]+$/i.test(v)) return status('stShop', 'bad', 'Paste the full link of your store, starting with https://');
+      S.shop = v; save(); render();
+    };
+    document.querySelectorAll('[data-shopchk]').forEach((c) => c.addEventListener('change', () => { S.shopChk = S.shopChk || {}; S.shopChk[c.dataset.shopchk] = c.checked ? 1 : 0; save(); }));
   }
 };
 
