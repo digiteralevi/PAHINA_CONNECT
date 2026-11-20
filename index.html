@@ -383,7 +383,7 @@ const PICS = {
     G.row('<span style="font-family:ui-monospace,monospace;color:#9A9A9A">-- PAHINA SUITE ENGINE v1.0 ...</span>', '', 2) +
     '<div style="text-align:right">' + G.btn('Run', 3, true) + '</div>' +
     G.row('Results', '<span class="ok">Pahina Suite is ready</span>', 4)),
-  6: () => shot(6, 'Function name must be exactly: chat. Then turn Verify JWT OFF and Save.', 'Edge Functions', G.side(['Functions', 'Secrets'], 'Functions'),
+  6: () => shot(6, 'Function name must be exactly: chat. Then Settings tab: Verify JWT OFF, Save changes.', 'Edge Functions', G.side(['Functions', 'Secrets'], 'Functions'),
     '<div>' + G.btn('Deploy a new function', 2) + ' ' + G.btn('Via Editor', 2) + '</div>' +
     G.row('Function name', G.val('chat'), 4) +
     '<div style="text-align:right">' + G.btn('Deploy function', 4, true) + '</div>' +
@@ -451,7 +451,7 @@ const VIEWS = {
       <li>Click <b>Open Supabase</b> below. Sign up with your Google or GitHub account.</li>
       <li>Click <kbd>New project</kbd>. If it asks for an organization, click <kbd>Create organization</kbd> first and choose the <b>Free</b> plan.</li>
       <li>Project name: type your business name. Database password: click <kbd>Generate a password</kbd>, then save it somewhere safe.</li>
-      <li>Region: choose <b>Southeast Asia (Singapore)</b> if you are in the Philippines. Click <kbd>Create new project</kbd>.</li>
+      <li>Region: choose <b>Southeast Asia (Singapore)</b> if you are in the Philippines (if it shows Auto, click <b>Need a specific region?</b>). Under <b>Data access</b>, tick <b>Grant API access to new tables automatically</b>. Click <kbd>Create new project</kbd>. If Supabase says <b>Unable to create project under Free Plan</b>, your account already has 2 free projects: pause or delete one you do not use, or use another Gmail (best: the client&#39;s own).</li>
       <li>Wait about 1 to 2 minutes until the project is ready, then come back to this tab.</li>
     </ol>
     ${PICS[1]()}
@@ -481,9 +481,8 @@ const VIEWS = {
     <p class="lead">This lets you create your owner account right away. No email is sent, so you will <b>not</b> hit the "email rate limit" error in Step 6. Do this <b>before</b> Step 6.</p>
     <ol class="steps">
       <li>Click <b>Open sign-in settings</b> below. In Supabase you will see <b>Authentication</b> then <b>Sign In / Providers</b>.</li>
-      <li>In the list of providers, click <kbd>Email</kbd>.</li>
-      <li>Keep <b>Enable Email provider</b> ON. Turn <b>Confirm email</b> OFF (the switch turns grey).</li>
-      <li>Scroll down and click <kbd>Save</kbd>. Then come back here and click <b>Check</b>.</li>
+            <li>Under <b>User Signups</b>, turn <b>Confirm email</b> OFF (the switch turns grey). On older screens, click <kbd>Email</kbd> in the providers list first.</li>
+      <li>Click <kbd>Save changes</kbd> right below it. Then come back here and click <b>Check</b>.</li>
     </ol>
     ${PICS[3]()}
     <div class="row">
@@ -502,7 +501,7 @@ const VIEWS = {
     <ol class="steps">
       <li>Type your email above, then click <b>Copy the engine</b>.</li>
       <li>Click <b>Open SQL Editor</b>. Click inside the big empty box, then paste (<kbd>Ctrl</kbd> + <kbd>V</kbd>, or <kbd>Cmd</kbd> + <kbd>V</kbd> on Mac).</li>
-      <li>Click the green <kbd>Run</kbd> button. If Supabase asks you to confirm, click <kbd>Run this query</kbd>.</li>
+      <li>Click the green <kbd>Run</kbd> button. If Supabase asks you to confirm, click <kbd>Run query</kbd> (it is safe). If a pop-up about snippets shows first, click <kbd>Understood</kbd>.</li>
       <li>At the bottom you should see <b>Pahina Suite is ready</b>. Then come back and click <b>Check</b>.</li>
     </ol>
     <div class="row">
@@ -535,7 +534,7 @@ const VIEWS = {
       <li>Click <kbd>Deploy a new function</kbd>, then choose <kbd>Via Editor</kbd>.</li>
       <li>Delete the sample code in the editor, then paste the AI code.</li>
       <li>At the bottom, change the function name to exactly <b>chat</b> (small letters). Click <kbd>Deploy function</kbd> and wait until it says it is deployed.</li>
-      <li>Open the <kbd>Details</kbd> (or Settings) tab of <b>chat</b>, turn <b>Verify JWT</b> (or "Enforce JWT verification") <b>OFF</b>, then click <kbd>Save</kbd>.</li>
+      <li>Open <b>chat</b>, then its <kbd>Settings</kbd> tab (older screens: Details). Turn <b>Verify JWT with legacy secret</b> <b>OFF</b>, then click <kbd>Save changes</kbd>. Check it again every time you deploy chat again.</li>
       <li>Come back and click <b>Check</b>.</li>
     </ol>
     <div class="row">
