@@ -730,7 +730,19 @@ const ACTIONS = {
       const r = await pingChat();
       if (r.status === 404) return status('st6', 'bad', 'No function named <b>chat</b> yet. Check that the name is exactly "chat" and that it finished deploying.');
       if (r.status === 401 || r.status === 403) return status('st6', 'bad', 'The function is there, but <b>Verify JWT</b> is still ON. Turn it off in the function settings, save, then check again.');
-      if (!r.ok) return status('st6', 'bad', r.status ? 'The function answered with an error (' + r.status + '). Deploy it again, then check.' : 'Could not reach your project. Check your internet.');
+      if (!r.ok && !r.status) {
+        /* The browser blocked the answer. Usually Verify JWT is still ON, the name is not exactly chat, or it is still deploying. */
+        let online = true; try { await fetch(S.url + '/auth/v1/health', { mode: 'no-cors' }); } catch (e) { online = false; }
+        if (!online) return status('st6', 'bad', 'Could not reach your project. Check your internet, then click Check again.');
+        const u = S.url + '/functions/v1/chat';
+        return status('st6', 'bad', '<b>Your project answered, but the chat function did not let us in.</b> Find out why in 10 seconds:' +
+          '<ol><li>Click <b>Open my chat test</b> below. A new tab opens.</li>' +
+          '<li>If it says <b>Missing authorization header</b> or <b>Invalid JWT</b>: Verify JWT is still ON. In Supabase open Edge Functions, click <b>chat</b>, open <b>Details</b> (or Settings), turn <b>Verify JWT</b> (it may say "Enforce JWT verification" or "Verify JWT with legacy secret") <b>OFF</b>, then click <b>Save changes</b> at the bottom.</li>' +
+          '<li>If it says <b>Requested function was not found</b>: the name is not exactly <b>chat</b>. Deploy a new function named <b>chat</b> (small letters).</li>' +
+          '<li>If it shows <b>"v"</b> and <b>"error":"method"</b>: the function is fine. Wait 30 seconds, then click Check again.</li></ol>' +
+          'Then come back here and click <b>Check</b>.<br><a class="btn sec" href="' + u + '" target="_blank" rel="noopener">Open my chat test</a>');
+      }
+      if (!r.ok) return status('st6', 'bad', 'The function answered with an error (' + r.status + '). Deploy it again, then check.');
       if (!r.body || !r.body.v) return status('st6', 'bad', 'Your <b>chat</b> function is an <b>older version</b>. Click <b>Copy the AI code</b> again, open your <b>chat</b> function, click <kbd>Code</kbd>, delete everything, paste, then click <kbd>Deploy</kbd>. Wait until it says deployed, then click Check.');
       S.done[6] = 1; save();
       status('st6', 'ok', '<b>AI chat is on.</b> Next, give it a brain: your Gemini key.');
