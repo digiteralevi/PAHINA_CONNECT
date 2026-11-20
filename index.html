@@ -110,7 +110,7 @@ input:focus{border-color:var(--acc);box-shadow:0 0 0 3px var(--accdim)}
 .status.show{display:flex}
 .status.ok{background:var(--okdim);color:var(--ok)}
 .status.bad{background:var(--baddim);color:var(--bad)}
-.status.wait{background:var(--accdim);color:var(--acc2)}
+.status.wait,.status.next{background:var(--accdim);color:var(--acc2)}
 .status .t{color:var(--ink)}
 .dot{width:8px;height:8px;border-radius:50%;background:currentColor;margin-top:7px;flex-shrink:0}
 .spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-top-color:transparent;animation:sp .8s linear infinite;margin-top:3px;flex-shrink:0}
@@ -622,7 +622,7 @@ const ACTIONS = {
       } catch (e) {
         /* If the check itself cannot run, do not block the buyer. */
         S.done[3] = 1; save();
-        status('st3', 'wait', 'We could not check this automatically. If you turned <b>Confirm email</b> OFF and clicked <b>Save</b>, click Next.');
+        status('st3', 'next', 'We could not check this automatically. If you turned <b>Confirm email</b> OFF and clicked <b>Save</b>, click Next.');
         document.querySelector('[data-act=next]').disabled = false;
       }
     };
@@ -656,7 +656,7 @@ const ACTIONS = {
       S.email = em; save();
       const sql = SUITE_SQL.replace(EMAIL_MARK, em);
       copy(sql, 'Engine');
-      status('st4', 'wait', 'Engine copied with <b>' + esc(em) + '</b>. Paste it in the SQL Editor and click Run, then click Check.');
+      status('st4', 'next', '<b>Engine copied</b> with <b>' + esc(em) + '</b>. Your turn: click <b>Open SQL Editor</b>, click <b>New query</b>, paste, click <b>Run</b> and wait for "Pahina Suite is ready". Then come back and click <b>Check</b>.');
     };
     $('bCheckSql').onclick = async () => {
       if (!S.email) return status('st4', 'bad', 'Type your email and click Copy the engine first.');
